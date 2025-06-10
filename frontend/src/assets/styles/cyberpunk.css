@@ -1,0 +1,51 @@
+:root {
+    --cy-color-primary: #0ff;
+    --cy-color-accent: #f0f;
+    --cy-bg-dark: #000;
+    --cy-font: 'Courier New', Courier, monospace;
+  }
+  
+  body {
+    background: radial-gradient(ellipse at center, #000 0%, #111 100%);
+    color: var(--cy-color-primary);
+    font-family: var(--cy-font);
+  }
+  
+  .cy-box {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 2rem;
+    border: 1px solid var(--cy-color-primary);
+    border-radius: 8px;
+    box-shadow: 0 0 15px #0ff3;
+  }
+  
+  .cy-title {
+    color: var(--cy-color-accent);
+    text-shadow: 0 0 5px var(--cy-color-accent), 0 0 10px var(--cy-color-primary);
+  }
+  
+  .cy-input,
+  .cy-button {
+    background: var(--cy-bg-dark);
+    color: var(--cy-color-primary);
+    border: 1px solid var(--cy-color-primary);
+    padding: 0.75rem;
+    font-family: inherit;
+    font-size: 1rem;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .cy-input:focus,
+  .cy-button:focus {
+    outline: none;
+    box-shadow: 0 0 5px var(--cy-color-primary);
+  }
+  
+  .cy-button:hover {
+    background: var(--cy-color-primary);
+    color: var(--cy-bg-dark);
+    cursor: pointer;
+    text-shadow: 0 0 2px var(--cy-bg-dark);
+  }
+  
