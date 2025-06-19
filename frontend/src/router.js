@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import ChatTerminal from './views/ChatTerminal.vue'
-import Login from './views/Login.vue'
-import Register from './views/Register.vue'
-import MemoryMap from './views/MemoryMap.vue'
-import Profile from './views/Profile.vue'
+import ChatTerminal from './components/ChatTerminal.vue'
+import Login from './components/Login.vue'
+import Register from './components/Register.vue'
+import MemoryMap from './components/MemoryMap.vue'
+import Profile from './components/Profile.vue'
 
 const routes = [
   { path: '/', component: ChatTerminal },
@@ -14,7 +14,9 @@ const routes = [
   { path: '/profile', component: Profile },
 ]
 
-export const router = createRouter({
+const router = createRouter({
   history: createWebHistory(),
-  routes,
+  routes
 })
+
+export default router
