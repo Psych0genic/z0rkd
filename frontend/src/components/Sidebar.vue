@@ -1,19 +1,21 @@
+<script setup>
+import { useAuth } from '../composables/useAuth'
+const { isLoggedIn } = useAuth()
+</script>
+
 <template>
-    <div class="sidebar">
-      <div class="logo">Z0RKD</div>
-      <nav>
-        <router-link to="/">🖥 Terminal</router-link>
-        <router-link to="/memory">🧠 Memory Map</router-link>
-        <router-link to="/login">🔐 Login</router-link>
-        <router-link to="/register">🆕 Register</router-link>
-        <router-link to="/profile">👤 Profile</router-link>
-      </nav>
-    </div>
-  </template>
-  
-  <script setup>
-  // No additional script logic needed
-  </script>
+  <div class="sidebar">
+    <div class="logo">Z0RKD</div>
+    <nav>
+      <router-link to="/">🖥 Terminal</router-link>
+      <router-link to="/memory">🧠 Memory Map</router-link>
+      <router-link to="/profile">👤 Profile</router-link>
+      <router-link v-if="!isLoggedIn" to="/login">🔐 Login</router-link>
+      <router-link v-if="!isLoggedIn" to="/register">🆕 Register</router-link>
+    </nav>
+  </div>
+</template>
+
   
   <style scoped>
   .sidebar {

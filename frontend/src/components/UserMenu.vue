@@ -20,8 +20,10 @@ const toggleDropdown = () => (dropdownOpen.value = !dropdownOpen.value)
 
 const logout = () => {
   localStorage.removeItem('token')
+  localStorage.removeItem('user') // optional, if you store it
   router.push('/login')
 }
+
 
 const clickOutside = (e) => {
   if (!e.target.closest('.user-menu')) dropdownOpen.value = false

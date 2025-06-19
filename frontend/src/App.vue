@@ -1,13 +1,9 @@
 <script setup>
 import UserMenu from './components/UserMenu.vue'
 import Sidebar from './components/Sidebar.vue'
-import { ref, onMounted } from 'vue'
+import { useAuth } from './composables/useAuth'
 
-const isLoggedIn = ref(false)
-
-onMounted(() => {
-  isLoggedIn.value = !!localStorage.getItem('token')
-})
+const { isLoggedIn } = useAuth()
 </script>
 
 <template>
@@ -50,7 +46,7 @@ onMounted(() => {
 .layout {
   display: flex;
   flex: 1;
-  min-height: 0; /* Allows content to scroll properly */
+  min-height: 0;
 }
 
 .main-content {
