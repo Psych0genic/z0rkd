@@ -2,77 +2,81 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
-const memory = ref([])
-const loading = ref(true)
-const token = localStorage.getItem('token')
+const memories = ref([])
 
-onMounted(async () => {
+const fetchMemory = async () => {
   try {
-    const res = await axios.get('/api/chat/memory', {
-      headers: { Authorization: `Bearer ${token}` }
+    const res = await axios.get('/api/chat/history', {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     })
-    memory.value = res.data.memory
+    memories.value = res.data.history
   } catch (err) {
-    console.error('[Memory Fetch Error]', err.response?.data || err.message)
-  } finally {
-    loading.value = false
+    console.error('Memory load failed:', err)
   }
-})
+}
+
+onMounted(fetchMemory)
 </script>
 
 <template>
   <div class="memory-map">
-    <div class="header">🧠 Memory Map — Z0RKD v0.9</div>
-    <div v-if="loading" class="loading">Loading memory...</div>
-    <div v-else-if="memory.length === 0" class="empty">No memory found.</div>
-    <div v-else class="entries">
-      <div v-for="(msg, i) in memory" :key="i" class="entry">
-        <strong>{{ msg.sender || 'user' }}:</strong> {{ msg.content }}
-        <div class="timestamp">{{ new Date(msg.timestamp).toLocaleString() }}</div>
-      </div>
+    <h2>🧠 Memory Map</h2>
+    <div v-if="memories.length === 0">No memories yet. Try chatting first.</div>
+    <div v-for="(msg, i) in memories" :key="i" class="memory-line">
+      <span class="timestamp">{{ new Date(msg.timestamp).toLocaleString() }}</span>
+      <span :class="['sender', msg.sender]">{{ msg.sender.toUpperCase() }}</span>
+      <span v-if="msg.personaName" class="persona-tag">{{ msg.personaName }}</span>
+      <span class="content">{{ msg.content }}</span>
     </div>
+
   </div>
 </template>
 
 <style scoped>
 .memory-map {
-  font-family: 'Courier New', monospace;
-  background: black;
-  color: #0ff;
-  padding: 1rem;
   max-width: 800px;
   margin: 2rem auto;
-  border: 2px solid #0ff;
-  border-radius: 12px;
-  box-shadow: 0 0 20px #0ff5;
+  color: #0ff;
+  font-family: 'Courier New', monospace;
 }
-.header {
-  font-weight: bold;
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-  text-shadow: 0 0 6px #0ff;
-}
-.loading,
-.empty {
-  text-align: center;
-  color: #0cf;
-}
-.entries {
+
+.memory-line {
+  padding: 0.5rem;
+  border-bottom: 1px solid #0ff3;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  max-height: 500px;
-  overflow-y: auto;
 }
-.entry {
-  background: #000;
-  border: 1px dashed #0ff6;
-  padding: 0.5rem;
-  border-radius: 6px;
-}
+
 .timestamp {
-  font-size: 0.8rem;
-  color: #0ff9;
-  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: #777;
 }
+
+.sender {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.sender.user {
+  color: #0ff;
+}
+.sender.ai {
+  color: #f0f;
+}
+
+.content {
+  margin-top: 0.25rem;
+  color: #ccc;
+}
+
+.persona-tag {
+  font-size: 0.75rem;
+  background: #0ff2;
+  color: #0ff;
+  padding: 0.1rem 0.5rem;
+  border-radius: 4px;
+  display: inline-block;
+  margin: 0.2rem 0;
+}
+
 </style>

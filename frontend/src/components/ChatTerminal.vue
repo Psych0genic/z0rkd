@@ -2,6 +2,7 @@
 import { ref, nextTick } from 'vue'
 import axios from 'axios'
 import { useAuth } from '../composables/useAuth'
+import PersonaSelector from './PersonaSelector.vue'
 
 const { isLoggedIn } = useAuth()
 const messages = ref([])
@@ -9,6 +10,7 @@ const input = ref('')
 const loading = ref(false)
 const token = localStorage.getItem('token')
 const messagesEnd = ref(null)
+const activePersona = ref(JSON.parse(localStorage.getItem('persona') || 'null'))
 
 const scrollToBottom = () => {
   nextTick(() => {
@@ -20,16 +22,31 @@ const scrollToBottom = () => {
 
 const sendMessage = async () => {
   if (!input.value.trim()) return
+
   messages.value.push({ text: input.value, sender: 'user' })
-  const currentInput = input.value
+  const userInput = input.value
   input.value = ''
   scrollToBottom()
   loading.value = true
 
   try {
+    const resHistory = await axios.get('/api/chat/history', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+
+    const formattedHistory = resHistory.data.history
+      .map(m => `${m.sender === 'user' ? 'User' : 'AI'}: ${m.content}`)
+      .join('\n')
+
+    const prompt =
+      (activePersona.value?.prompt || 'You are a helpful AI in a neon-drenched cyberpunk world.') +
+      '\n\n' +
+      formattedHistory +
+      `\nUser: ${userInput}\nAI:`
+
     const res = await axios.post(
       '/api/chat/send',
-      { message: currentInput },
+      { message: prompt },
       { headers: { Authorization: `Bearer ${token}` } }
     )
 
@@ -49,7 +66,16 @@ const sendMessage = async () => {
 
 <template>
   <div class="terminal">
-    <div class="header">Z0RKD v0.9 — AI Terminal</div>
+    <div class="header">
+      <span>Z0RKD v0.9 — AI Terminal</span>
+      <span v-if="activePersona" class="persona-chip">
+        {{ activePersona.avatar }} {{ activePersona.name }}
+        <button @click="activePersona = null">✖</button>
+      </span>
+    </div>
+
+
+    <PersonaSelector @select="p => (activePersona = p)" />
 
     <div v-if="!isLoggedIn" class="auth-links">
       <button @click="$router.push('/login')">Login</button>
@@ -62,8 +88,11 @@ const sendMessage = async () => {
         :key="i"
         :class="['message', msg.sender]"
       >
+        <span v-if="msg.personaName" class="persona-tag">{{ msg.personaName }}</span>
         <span>{{ msg.sender === 'user' ? '> ' : '' }}{{ msg.text }}</span>
       </div>
+
+
 
       <div v-if="loading" class="message loading">
         <span>AI is typing<span class="dots">...</span></span>
@@ -190,4 +219,46 @@ button {
 button:hover {
   background: #0cc;
 }
+
+.persona-chip {
+  margin-left: auto;
+  background: #0ff3;
+  color: black;
+  border-radius: 6px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 0 5px #0ff;
+}
+.persona-chip button {
+  background: transparent;
+  color: black;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.persona-tag {
+  font-size: 0.75rem;
+  background: #0ff2;
+  color: #0ff;
+  padding: 0.1rem 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.25rem;
+  display: inline-block;
+}
+
+.persona-tag {
+  font-size: 0.75rem;
+  background: #0ff2;
+  color: #0ff;
+  padding: 0.1rem 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.25rem;
+  display: inline-block;
+}
+
+
 </style>

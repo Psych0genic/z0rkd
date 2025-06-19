@@ -10,6 +10,8 @@ const { isLoggedIn } = useAuth()
       <router-link to="/">🖥 Terminal</router-link>
       <router-link to="/memory">🧠 Memory Map</router-link>
       <router-link to="/profile">👤 Profile</router-link>
+      <router-link to="/personas">🎭 Personas</router-link>
+      <router-link to="/memory">🧠 Memory Map</router-link>
       <router-link v-if="!isLoggedIn" to="/login">🔐 Login</router-link>
       <router-link v-if="!isLoggedIn" to="/register">🆕 Register</router-link>
     </nav>
